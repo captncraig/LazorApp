@@ -1,0 +1,74 @@
+<html>
+<head>
+	<style>
+		.cell{
+			width: 64px;
+			height:64px;
+			float:left;
+			background-size:64px 64px;
+		}
+		.empty{
+			background-color: grey;
+		}
+		.redTarget{
+			background-image:url('redTarget.ico')
+		}
+		.redMirror{
+			background-image:url('redMirror.ico')
+		}
+		.doubleMirror{
+			background-image:url('redDoubleMirror.ico')
+		}
+		.red{
+			background-color:red;
+		}
+		.silver{
+			background-color:green;
+		}
+		.east{
+			-webkit-transform: rotate(90deg);
+			-moz-transform: rotate(90deg);
+			-ms-transform: rotate(90deg);
+			-o-transform: rotate(90deg);
+			transform: rotate(90deg);
+		}
+		.south{
+			-webkit-transform: rotate(180deg);
+			-moz-transform: rotate(180deg);
+			-ms-transform: rotate(180deg);
+			-o-transform: rotate(180deg);
+			transform: rotate(180deg);
+		}
+		.west{
+			-webkit-transform: rotate(-90deg);
+			-moz-transform: rotate(-90deg);
+			-ms-transform: rotate(-90deg);
+			-o-transform: rotate(-90deg);
+			transform: rotate(-90deg);
+		}
+		
+	</style>
+
+</head>
+<body>
+
+<div class="board">
+	<div class="cell redSphinx south"></div>
+	<div class="cell silver doubleMirror"></div>
+	<div class="cell empty"></div>
+	<div class="cell empty"></div>
+	<div class="cell redShield south"></div>
+	<div class="cell redTarget south"></div>
+	<div class="cell redShield south"></div>
+	<div class="cell redMirror east"></div>
+	<div class="cell empty"></div>
+	<div class="cell empty"></div>
+	<div style="clear:both;"></div>
+	
+
+
+
+</div>
+</body>
+
+</html>
