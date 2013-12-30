@@ -1,4 +1,4 @@
-<html>
+<html ng-app="lazorApp">
 <head>
 	<style>
 		.cell{
@@ -10,14 +10,20 @@
 		.empty{
 			background-color: grey;
 		}
-		.redTarget{
-			background-image:url('redTarget.ico')
+		.target{
+			background-image:url('target.ico')
 		}
-		.redMirror{
-			background-image:url('redMirror.ico')
+		.lazor{
+			background-image:url('lazor.ico')
+		}
+		.mirror{
+			background-image:url('mirror.ico')
+		}
+		.shield{
+			background-image:url('shield.ico')
 		}
 		.doubleMirror{
-			background-image:url('redDoubleMirror.ico')
+			background-image:url('double.ico')
 		}
 		.red{
 			background-color:red;
@@ -50,25 +56,22 @@
 	</style>
 
 </head>
-<body>
+<body ng-controller="LazorCtrl">
 
 <div class="board">
-	<div class="cell redSphinx south"></div>
-	<div class="cell silver doubleMirror"></div>
-	<div class="cell empty"></div>
-	<div class="cell empty"></div>
-	<div class="cell redShield south"></div>
-	<div class="cell redTarget south"></div>
-	<div class="cell redShield south"></div>
-	<div class="cell redMirror east"></div>
-	<div class="cell empty"></div>
-	<div class="cell empty"></div>
-	<div style="clear:both;"></div>
-	
-
-
+	<div ng-repeat="row in board" style="clear:both">
+		<div class='cell' ng-class='[cell.type,cell.facing,cell.color]' ng-repeat="cell in row"></div>
+	</div>
 
 </div>
+
+<script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.js"></script>
+<script src="app.js"></script>
+
+
+
+
 </body>
 
 </html>
