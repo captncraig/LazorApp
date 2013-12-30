@@ -5,12 +5,13 @@ import (
 	"github.com/captncraig/lazors"
 	"fmt"
 	"encoding/base64"
+	"encoding/json"
 )
 func main() {
     lazors.ClassicSetup()
 	
 	http.HandleFunc("/newGame",newGame)
-	
+	http.HandleFunc("/path",getPath)
 	http.HandleFunc("/files/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(r.URL.Path[1:])
 		http.ServeFile(w, r, r.URL.Path[1:])
@@ -22,6 +23,21 @@ func newGame(w http.ResponseWriter, r *http.Request){
 	board := lazors.ClassicSetup()
 	str := base64.StdEncoding.EncodeToString(board[0:80])
 	w.Write([]byte(str))
+}
+
+func getPath(w http.ResponseWriter, r *http.Request){
+	board := lazors.ClassicSetup()
+	path := board.GetFullPath( 79, lazors.North)
+	node := path.Front()
+	w.Header().Set("Content-Type", "application/json")
+	w.Write([]byte("["))
+	for ;node!=nil;node=node.Next(){
+		seg := node.Value.(*lazors.PathSegment)
+		b,_ := json.Marshal(seg)
+		w.Write(b)
+		if node.Next() != nil{w.Write([]byte(","))}
+	}
+	w.Write([]byte("]"))
 }
 
 
