@@ -1,10 +1,17 @@
 <html ng-app="lazorApp">
 <head>
 	<style>
-		.cell{
+		.cellWrapper{
 			width: 64px;
 			height:64px;
 			float:left;
+			background-size:64px 64px;
+			background-color:cyan;
+			position: relative;
+		}
+		.cell{
+			width: 64px;
+			height:64px;
 			background-size:64px 64px;
 		}
 		.empty{
@@ -30,6 +37,38 @@
 		}
 		.silver{
 			background-color:green;
+		}
+		.upLazor{
+			background-color:red;
+			height:60%;
+			position:absolute;
+			top:0px;
+			left:40%;
+			width: 20%;
+		}
+		.downLazor{
+			background-color:red;
+			height:60%;
+			position:absolute;
+			bottom:0px;
+			left:40%;
+			width: 20%;
+		}
+		.rightLazor{
+			background-color:red;
+			width:60%;
+			position:absolute;
+			right:0px;
+			top:40%;
+			height: 20%;
+		}
+		.leftLazor{
+			background-color:red;
+			width:60%;
+			position:absolute;
+			left:0px;
+			top:40%;
+			height: 20%;
 		}
 		.east{
 			-webkit-transform: rotate(90deg);
@@ -60,7 +99,13 @@
 
 <div class="board">
 	<div ng-repeat="row in board" style="clear:both">
-		<div class='cell' ng-class='[cell.type,cell.facing,cell.color]' ng-repeat="cell in row"></div>
+		<div class='cellWrapper' ng-repeat="cell in row">
+			<div class='cell' ng-class='[cell.type,cell.facing,cell.color]' ></div>
+			<div class='upLazor' ng-show='cell.upLazor'></div>
+			<div class='leftLazor' ng-show='cell.leftLazor'></div>
+			<div class='downLazor' ng-show='cell.downLazor'></div>
+			<div class='rightLazor' ng-show='cell.rightLazor'></div>
+		</div>
 	</div>
 
 </div>
