@@ -25,6 +25,24 @@ function LazorCtrl($scope, $http) {
 			$scope.board.push(thisRow);
 		}
 	});
+	
+	$scope.move = function(){
+		$http.get('../path').success(function(data){
+			console.log(data);
+			var i;
+			for(i = 0; i<data.length; i++){
+				var move = data[i];
+				var row = Math.floor(move.Cell / 10);
+				var col = move.Cell % 10;
+				console.log(move,row,col)
+				if(move.ExitDirection == 0 || move.EnterDirection == 0) $scope.board[row][col].upLazor = true;
+				if(move.ExitDirection == 16 || move.EnterDirection == 16) $scope.board[row][col].rightLazor = true;
+				if(move.ExitDirection == 32 || move.EnterDirection == 32) $scope.board[row][col].downLazor = true;
+				if(move.ExitDirection == 48 || move.EnterDirection == 48) $scope.board[row][col].leftLazor = true;
+			
+			}
+		})
+	};
 }
 
 function getType(cell){
