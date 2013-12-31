@@ -11,7 +11,7 @@ function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer) {
 	
 	$scope.move = function(){
 		var str = lazorSerializer.serialize($scope.board);
-		$http.get('../path').success(function(data){
+		$http.get('../path?brd='+str).success(function(data){
 			var i;
 			for(i = 0; i<data.length; i++){
 				var move = data[i];

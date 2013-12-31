@@ -27,7 +27,15 @@ func newGame(w http.ResponseWriter, r *http.Request){
 }
 
 func getPath(w http.ResponseWriter, r *http.Request){
-	board := lazors.ClassicSetup()
+	board := lazors.Board{}
+	query := r.URL.Query().Get("brd")
+	if query == ""{
+		board = lazors.ClassicSetup()
+	}else{
+		decoded, _ :=  base64.StdEncoding.DecodeString(query)
+		copy(board[:], decoded)
+	}
+	
 	path := board.GetFullPath( 79, lazors.North)
 	node := path.Front()
 	w.Header().Set("Content-Type", "application/json")

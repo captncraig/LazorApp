@@ -68,7 +68,7 @@ lazorApp.factory('lazorSerializer', function(){
 					raw += String.fromCharCode(i);
 				}
 			}
-			console.log(btoa(raw));
+			return btoa(raw);
 		}
 	}
 });
