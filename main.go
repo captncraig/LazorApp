@@ -12,9 +12,10 @@ func main() {
 	
 	http.HandleFunc("/newGame",newGame)
 	http.HandleFunc("/path",getPath)
-	http.HandleFunc("/files/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(r.URL.Path[1:])
-		http.ServeFile(w, r, r.URL.Path[1:])
+	
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("files/"+r.URL.Path[1:])
+		http.ServeFile(w, r, "files/"+r.URL.Path[1:])
 	})
     panic(http.ListenAndServe(":17901", nil))
 }

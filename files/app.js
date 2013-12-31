@@ -1,84 +1,100 @@
 'use strict';
 
-
 var lazorApp = angular.module('lazorApp', []);
 
-function LazorCtrl($scope, $http) {
+function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer) {
 	$scope.board = [];
 	
 	$http.get('../newGame').success(function(data){
-		data = atob(data);
-		$scope.board = [];
-		var col,row;
-		for(row = 0; row<8; row++){
-			var thisRow = [];
-			for(col = 0; col <10; col++){
-				var cell = data.charCodeAt(col + row*10)
-				var t = getType(cell);
-				var f = '', c = ''
-				if(t != 'empty'){
-					f = getFacing(cell);
-					c = getColor(cell);
-				}
-				thisRow.push({type:t,facing:f,color:c});
-			}
-			$scope.board.push(thisRow);
-		}
+		$scope.board = lazorDeserializer.deserialize(data);
 	});
 	
 	$scope.move = function(){
+		var str = lazorSerializer.serialize($scope.board);
 		$http.get('../path').success(function(data){
-			console.log(data);
 			var i;
 			for(i = 0; i<data.length; i++){
 				var move = data[i];
 				var row = Math.floor(move.Cell / 10);
 				var col = move.Cell % 10;
-				console.log(move,row,col)
 				if(move.ExitDirection == 0 || move.EnterDirection == 0) $scope.board[row][col].upLazor = true;
 				if(move.ExitDirection == 16 || move.EnterDirection == 16) $scope.board[row][col].rightLazor = true;
 				if(move.ExitDirection == 32 || move.EnterDirection == 32) $scope.board[row][col].downLazor = true;
 				if(move.ExitDirection == 48 || move.EnterDirection == 48) $scope.board[row][col].leftLazor = true;
-			
 			}
 		})
 	};
-}
-
-function getType(cell){
-	switch(cell & 7){
-		case 1:
-			return 'lazor';
-		case 2:
-			return 'target';
-		case 3:
-			return 'shield';
-		case 4:
-			return 'mirror';
-		case 5: 
-			return 'doubleMirror';
-	}
-	return 'empty';
-}
-
-function getFacing(cell){
-	var facingOnly = cell & (3 << 4);
-	facingOnly >>=4;
-	switch(facingOnly){
-		case 0:
-			return 'noth';
-		case 1:
-			return 'east';
-		case 2:
-			return 'south';
-		case 3:
-			return 'west';
-	}
-}
-function getColor(cell){
-	if( cell & (1 << 3)){
-		return 'red';
-	}
-	return 'silver';
 	
+	var clickState = 0; 
+	var selected = null;
+	var possibleSet = [];
+	
+	function unselect(){
+		selected.overlay = '';
+		possibleSet.forEach(function(cell){
+			cell.overlay = '';
+		});
+		possibleSet = [];
+	}
+	
+	function swap(a,b){
+		var f,t,c;
+		f = a.facing;
+		t = a.type;
+		c = a.color;
+		a.facing = b.facing;
+		a.type = b.type;
+		a.color = b.color;
+		b.facing = f;
+		b.type = t;
+		b.color = c;
+	}
+	
+	$scope.handleClick = function(cell){
+		if(clickState == 0 && cell.type != 'empty'){
+			cell.overlay = 'selected';
+			selected = cell;
+			clickState = 1;
+			possibleSet = neighbors.getNeighbors(cell,$scope.board);
+		}
+		else if(clickState == 1){
+			if(cell == selected){
+				unselect();
+				clickState = 0;
+			}
+			else if(_(possibleSet).contains(cell)){
+				swap(cell,selected);
+				unselect();
+				clickState = 0;
+			}
+		}
+	}
 }
+
+lazorApp.factory('neighbors', function(){
+	return{
+		getNeighbors: function(cell,board){
+			if(cell.type == 'lazor')return [];
+			var arr = [];
+			var row = cell.row -1, col;
+			for(;row <= cell.row + 1; row++){
+				if(row < 0 || row > 7) continue;
+				for(col = cell.col -1;col<=cell.col+1; col++){
+					if(col <0 || col > 9) continue;
+					if(row == cell.row && col == cell.col) continue;
+					var target = board[row][col];
+					if(target.type == 'empty' || (cell.type == 'doubleMirror' && (target.type == 'mirror' || target.type == 'shield'))){
+						target.overlay = 'possible';
+						arr.push(target);
+					}
+				}
+			}
+			return arr;
+		}
+	};
+});
+
+
+
+
+

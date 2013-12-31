@@ -13,6 +13,7 @@
 			width: 64px;
 			height:64px;
 			background-size:64px 64px;
+			z-index:9;
 		}
 		.empty{
 			background-color: grey;
@@ -45,6 +46,7 @@
 			top:0px;
 			left:40%;
 			width: 20%;
+			z-index:11;
 		}
 		.downLazor{
 			background-color:yellow;
@@ -53,6 +55,7 @@
 			bottom:0px;
 			left:40%;
 			width: 20%;
+			z-index:11;
 		}
 		.rightLazor{
 			background-color:yellow;
@@ -61,6 +64,7 @@
 			right:0px;
 			top:40%;
 			height: 20%;
+			z-index:11;
 		}
 		.leftLazor{
 			background-color:yellow;
@@ -69,6 +73,7 @@
 			left:0px;
 			top:40%;
 			height: 20%;
+			z-index:11;
 		}
 		.east{
 			-webkit-transform: rotate(90deg);
@@ -91,6 +96,19 @@
 			-o-transform: rotate(-90deg);
 			transform: rotate(-90deg);
 		}
+		.overlay{
+			position: absolute;
+			width: 64px;
+			height: 64px;
+			top: 0px;
+			z-index: 10;
+		}
+		.selected{
+			background-color:rgba(0,255,255,0.3);
+		}
+		.possible{
+			background-color:rgba(0,0,255,0.3);
+		}
 		
 	</style>
 
@@ -99,7 +117,8 @@
 
 <div class="board">
 	<div ng-repeat="row in board" style="clear:both">
-		<div class='cellWrapper' ng-repeat="cell in row">
+		<div class='cellWrapper' ng-repeat="cell in row" ng-click='handleClick(cell)'>
+			<div class='overlay' ng-class='[cell.overlay]'></div>
 			<div class='cell' ng-class='[cell.type,cell.facing,cell.color]' ></div>
 			<div class='upLazor' ng-show='cell.upLazor'></div>
 			<div class='leftLazor' ng-show='cell.leftLazor'></div>
@@ -113,8 +132,10 @@
 <button ng-click="move()">Fire Lazor!</button>
 
 <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.js"></script>
 <script src="app.js"></script>
+<script src="lazorDeserializer.js"></script>
 
 
 
