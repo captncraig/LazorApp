@@ -109,6 +109,9 @@
 		.possible{
 			background-color:rgba(0,0,255,0.3);
 		}
+		.dead{
+			background-color:rgba(0,0,0,0.5);
+		}
 		
 	</style>
 
@@ -126,10 +129,13 @@
 			<div class='rightLazor' ng-show='cell.rightLazor'></div>
 		</div>
 	</div>
-
+</div>
+<div class='rotateButtons' ng-show="clickState == 1">
+	<button ng-click="rotateLeft()">Rotate Left</button>
+	<button ng-click="rotateRight()">Rotate Right</button>
 </div>
 
-<button ng-click="move()">Fire Lazor!</button>
+
 
 <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>

@@ -35,7 +35,6 @@ func getPath(w http.ResponseWriter, r *http.Request){
 		decoded, _ :=  base64.StdEncoding.DecodeString(query)
 		copy(board[:], decoded)
 	}
-	
 	path := board.GetFullPath( 79, lazors.North)
 	node := path.Front()
 	w.Header().Set("Content-Type", "application/json")

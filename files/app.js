@@ -2,32 +2,17 @@
 
 var lazorApp = angular.module('lazorApp', []);
 
-function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer) {
+function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $timeout) {
 	$scope.board = [];
 	
 	$http.get('../newGame').success(function(data){
 		$scope.board = lazorDeserializer.deserialize(data);
 	});
 	
-	$scope.move = function(){
-		var str = lazorSerializer.serialize($scope.board);
-		$http.get('../path?brd='+str).success(function(data){
-			var i;
-			for(i = 0; i<data.length; i++){
-				var move = data[i];
-				var row = Math.floor(move.Cell / 10);
-				var col = move.Cell % 10;
-				if(move.ExitDirection == 0 || move.EnterDirection == 0) $scope.board[row][col].upLazor = true;
-				if(move.ExitDirection == 16 || move.EnterDirection == 16) $scope.board[row][col].rightLazor = true;
-				if(move.ExitDirection == 32 || move.EnterDirection == 32) $scope.board[row][col].downLazor = true;
-				if(move.ExitDirection == 48 || move.EnterDirection == 48) $scope.board[row][col].leftLazor = true;
-			}
-		})
-	};
-	
-	var clickState = 0; 
+	$scope.clickState = 0; 
 	var selected = null;
 	var possibleSet = [];
+	var currentColor = 'silver';
 	
 	function unselect(){
 		selected.overlay = '';
@@ -51,23 +36,80 @@ function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer) {
 	}
 	
 	$scope.handleClick = function(cell){
-		if(clickState == 0 && cell.type != 'empty'){
+		if($scope.clickState == 0 && cell.type != 'empty' && cell.color == currentColor){
 			cell.overlay = 'selected';
 			selected = cell;
-			clickState = 1;
+			$scope.clickState = 1;
 			possibleSet = neighbors.getNeighbors(cell,$scope.board);
 		}
-		else if(clickState == 1){
+		else if($scope.clickState == 1){
 			if(cell == selected){
 				unselect();
-				clickState = 0;
+				$scope.clickState = 0;
 			}
 			else if(_(possibleSet).contains(cell)){
 				swap(cell,selected);
-				unselect();
-				clickState = 0;
+				finishMove();
 			}
 		}
+	}
+	
+	function finishMove(){
+		unselect();
+		fireLazor();
+	}
+	
+	function nextTurn(){
+		$scope.clickState = 0;
+		currentColor = currentColor == 'silver' ? 'red' : 'silver';
+		var cellToRemove = $scope.killTarget;
+		if(cellToRemove){
+			cellToRemove.overlay = '';
+			cellToRemove.type = 'empty';
+			cellToRemove.facing = '';
+			cellToRemove.color = '';
+		}
+		_($scope.lazorCells).each(function(cell){
+			cell.upLazor = cell.rightLazor = cell.downLazor = cell.leftLazor = false;
+		});
+	}
+	
+	$scope.lazorCells = [];
+	$scope.killTarget = null;
+	
+	function fireLazor(){
+		var str = lazorSerializer.serialize($scope.board);
+		var that = this;
+		$http.get('../path?brd='+str).success(function(data){
+			$scope.lazorCells = [];
+			$scope.killTarget = null;
+			var i;
+			for(i = 0; i<data.length; i++){
+				var move = data[i];
+				var row = Math.floor(move.Cell / 10);
+				var col = move.Cell % 10;
+				var cell = $scope.board[row][col];
+				$scope.lazorCells.push(cell);
+				if(move.ExitDirection == 0 || move.EnterDirection == 0) 	cell.upLazor = true;
+				if(move.ExitDirection == 16 || move.EnterDirection == 16) 	cell.rightLazor = true;
+				if(move.ExitDirection == 32 || move.EnterDirection == 32) 	cell.downLazor = true;
+				if(move.ExitDirection == 48 || move.EnterDirection == 48) 	cell.leftLazor = true;
+				if(i==data.length -1 && move.IsDestroyed ){
+					$scope.killTarget = cell;
+					cell.overlay = 'dead';
+				}
+			}
+			$timeout(nextTurn,1000);
+		})
+	}
+	
+	$scope.rotateLeft = function(){
+		selected.facing = ["west","north","east","south"][["north","east","south","west"].indexOf(selected.facing)];
+		finishMove();
+	}
+	$scope.rotateRight = function(){
+		selected.facing = ["east","south","west","north"][["north","east","south","west"].indexOf(selected.facing)];
+		finishMove();
 	}
 }
 
