@@ -88,7 +88,7 @@ function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $
 	function fireLazor(){
 		var str = lazorSerializer.serialize($scope.board);
 		var that = this;
-		$http.get('../path?brd='+str).success(function(data){
+		$http.get('../path?brd='+str+"&s="+($scope.currentColor == 'red' ? "0" : "79")).success(function(data){
 			$scope.lazorCells = [];
 			$scope.killTarget = null;
 			var i;
