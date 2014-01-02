@@ -4,7 +4,7 @@ var lazorApp = angular.module('lazorApp', []);
 
 function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $timeout) {
 	$scope.board = [];
-	
+	$scope.rotation = 'north';
 	$http.get('../newGame').success(function(data){
 		$scope.board = lazorDeserializer.deserialize(data);
 	});
@@ -52,6 +52,10 @@ function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $
 				finishMove();
 			}
 		}
+	}
+	
+	$scope.flipBoard = function(){
+		$scope.rotation = $scope.rotation == 'north' ? 'south' : 'north'
 	}
 	
 	function finishMove(){
