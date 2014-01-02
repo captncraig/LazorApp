@@ -1,139 +1,6 @@
 <html ng-app="lazorApp">
 <head>
-	<style>
-		.rowHead{
-			float:left;
-			height:62px;
-			line-height:64px;
-			width: 15px;
-			border:1px solid black;
-			text-align: center;
-		}
-		.cellWrapper{
-			width: 64px;
-			height:64px;
-			float:left;
-			background-size:64px 64px;
-			background-color:cyan;
-			position: relative;
-		}
-		.colHead{
-			float:left;
-			width: 62px;
-			border:1px solid black;
-			height: 15px;
-			line-height:15px;
-			text-align: center;
-		}
-		.board{
-			width:674px;
-			height: 546px; 
-		}
-		.cell{
-			width: 64px;
-			height:64px;
-			background-size:64px 64px;
-			z-index:9;
-		}
-		.empty{
-			background-color: grey;
-		}
-		.target{
-			background-image:url('target.ico')
-		}
-		.lazor{
-			background-image:url('lazor.ico')
-		}
-		.mirror{
-			background-image:url('mirror.ico')
-		}
-		.shield{
-			background-image:url('shield.ico')
-		}
-		.doubleMirror{
-			background-image:url('double.ico')
-		}
-		.red{
-			background-color:red;
-		}
-		.silver{
-			background-color:green;
-		}
-		.upLazor{
-			background-color:yellow;
-			height:60%;
-			position:absolute;
-			top:0px;
-			left:40%;
-			width: 20%;
-			z-index:11;
-		}
-		.downLazor{
-			background-color:yellow;
-			height:60%;
-			position:absolute;
-			bottom:0px;
-			left:40%;
-			width: 20%;
-			z-index:11;
-		}
-		.rightLazor{
-			background-color:yellow;
-			width:60%;
-			position:absolute;
-			right:0px;
-			top:40%;
-			height: 20%;
-			z-index:11;
-		}
-		.leftLazor{
-			background-color:yellow;
-			width:60%;
-			position:absolute;
-			left:0px;
-			top:40%;
-			height: 20%;
-			z-index:11;
-		}
-		.east{
-			-webkit-transform: rotate(90deg);
-			-moz-transform: rotate(90deg);
-			-ms-transform: rotate(90deg);
-			-o-transform: rotate(90deg);
-			transform: rotate(90deg);
-		}
-		.south{
-			-webkit-transform: rotate(180deg);
-			-moz-transform: rotate(180deg);
-			-ms-transform: rotate(180deg);
-			-o-transform: rotate(180deg);
-			transform: rotate(180deg);
-		}
-		.west{
-			-webkit-transform: rotate(-90deg);
-			-moz-transform: rotate(-90deg);
-			-ms-transform: rotate(-90deg);
-			-o-transform: rotate(-90deg);
-			transform: rotate(-90deg);
-		}
-		.overlay{
-			position: absolute;
-			width: 64px;
-			height: 64px;
-			top: 0px;
-			z-index: 10;
-		}
-		.selected{
-			background-color:rgba(0,255,255,0.3);
-		}
-		.possible{
-			background-color:rgba(0,0,255,0.3);
-		}
-		.dead{
-			background-color:rgba(0,0,0,0.5);
-		}
-		
-	</style>
+	<link rel="stylesheet" type="text/css" href="lazors.css"/>
 
 </head>
 <body ng-controller="LazorCtrl">
@@ -158,11 +25,11 @@
 </div>
 
 <div class='rotateButtons' ng-show="clickState == 1">
-	<button ng-click="rotateLeft()">Rotate Left</button>
-	<button ng-click="rotateRight()">Rotate Right</button>
+	<button ng-click="rotateLeft()" ng-disabled="!canRotateLeft">Rotate Left</button>
+	<button ng-click="rotateRight()" ng-disabled="!canRotateRight">Rotate Right</button>
 </div>
 <button ng-click="flipBoard()">Flip Board</button>
-
+<div>Current turn:<div style='height:64px; width:64px;' ng-class='currentColor'></div></div>
 
 
 <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>

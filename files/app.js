@@ -5,6 +5,8 @@ var lazorApp = angular.module('lazorApp', []);
 function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $timeout) {
 	$scope.board = [];
 	$scope.rotation = 'north';
+	$scope.canRotateLeft = true;
+	$scope.canRotateRight = true;
 	$http.get('../newGame').success(function(data){
 		$scope.board = lazorDeserializer.deserialize(data);
 	});
@@ -12,7 +14,7 @@ function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $
 	$scope.clickState = 0; 
 	var selected = null;
 	var possibleSet = [];
-	var currentColor = 'silver';
+	$scope.currentColor = 'silver';
 	
 	function unselect(){
 		selected.overlay = '';
@@ -36,11 +38,13 @@ function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $
 	}
 	
 	$scope.handleClick = function(cell){
-		if($scope.clickState == 0 && cell.type != 'empty' && cell.color == currentColor){
+		if($scope.clickState == 0 && cell.type != 'empty' && cell.color == $scope.currentColor){
 			cell.overlay = 'selected';
 			selected = cell;
 			$scope.clickState = 1;
 			possibleSet = neighbors.getNeighbors(cell,$scope.board);
+			$scope.canRotateLeft = neighbors.canRotateLeft(cell);
+			$scope.canRotateRight = neighbors.canRotateRight(cell);
 		}
 		else if($scope.clickState == 1){
 			if(cell == selected){
@@ -65,7 +69,7 @@ function LazorCtrl($scope, $http, lazorDeserializer,neighbors,lazorSerializer, $
 	
 	function nextTurn(){
 		$scope.clickState = 0;
-		currentColor = currentColor == 'silver' ? 'red' : 'silver';
+		$scope.currentColor = $scope.currentColor == 'silver' ? 'red' : 'silver';
 		var cellToRemove = $scope.killTarget;
 		if(cellToRemove){
 			cellToRemove.overlay = '';
@@ -136,6 +140,14 @@ lazorApp.factory('neighbors', function(){
 				}
 			}
 			return arr;
+		},
+		canRotateLeft: function(cell){
+			if(cell.type != 'lazor') return true;
+			return cell.facing == 'north' || cell.facing == 'south';
+		},
+		canRotateRight: function(cell){
+			if(cell.type != 'lazor') return true;
+			return cell.facing == 'east' || cell.facing == 'west';
 		}
 	};
 });
