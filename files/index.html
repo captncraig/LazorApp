@@ -7,9 +7,9 @@
 
 <div class="board" ng-class="rotation">
 	<div style="float:left; width:16px; height:15px;"></div>
-	<div class='colHead' ng-repeat="c in 'ABCDEFGHIJ'">{{c}}</div>
+	<div class='colHead' ng-repeat="c in '0123456789'">{{c}}</div>
 	<div ng-repeat="row in board" style="clear:both">
-		<div class='rowHead'>{{$index}}</div>
+		<div class='rowHead'>{{"ABCDEFGH"[$index]}}</div>
 		<div class='cellWrapper' ng-repeat="cell in row" ng-click='handleClick(cell)'>
 			<div class='overlay' ng-class='[cell.overlay]'></div>
 			<div class='cell' ng-class='[cell.type,cell.facing,cell.color]' ></div>
@@ -18,10 +18,10 @@
 			<div class='downLazor' ng-show='cell.downLazor'></div>
 			<div class='rightLazor' ng-show='cell.rightLazor'></div>
 		</div>
-		<div class='rowHead south'>{{$index}}</div>
+		<div class='rowHead south'>{{"ABCDEFGH"[$index]}}</div>
 	</div>
 	<div style="float:left; width:16px; height:15px;"></div>
-	<div class='colHead south' ng-repeat="c in 'ABCDEFGHIJ'">{{c}}</div>
+	<div class='colHead south' ng-repeat="c in '0123456789'">{{c}}</div>
 </div>
 
 <div class='rotateButtons' ng-show="clickState == 1">
